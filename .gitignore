@@ -1,5 +1,16 @@
+# Maven
 target
+# ctags/etags
 TAGS
-*.patch
+# Vim
 *.swp
 *.swo
+# Class files should be covered by 'target'
+*.class
+# Other
+*.patch
+
+# Package Files #
+*.jar
+*.war
+*.ear
