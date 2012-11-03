@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cz.cvut.felk.cyber.jlens</groupId>
+  <artifactId>processor</artifactId>
+  <packaging>jar</packaging>
+  <name>jLens Annotations Processor</name>
+  <version>1.0-SNAPSHOT</version>
+  <url></url>
+
+  <parent>
+    <groupId>cz.cvut.felk.cyber.jlens</groupId>
+    <artifactId>jlens</artifactId>
+    <version>1.0</version>
+    <relativePath>..</relativePath>
+  </parent>
+
+  <dependencies>
+    <dependency>
+      <groupId>cz.cvut.felk.cyber.jlens</groupId>
+      <artifactId>core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+      <version>${freemarker.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- Options for javac. -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+	<configuration>
+          <proc>none</proc>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

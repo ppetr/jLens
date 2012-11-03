@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>cz.cvut.felk.cyber.jlens</groupId>
+  <artifactId>jlens</artifactId>
+  <packaging>pom</packaging>
+  <name>jLens</name>
+  <version>1.0</version>
+  <url></url>
+
+  <properties>
+    <freemarker.version>2.3.18</freemarker.version>
+
+    <testng.version>5.14.6</testng.version>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <modules>
+    <module>jlens</module>
+    <module>jlens-processor</module>
+    <module>jlens-example</module>
+  </modules>
+
+  <!-- ================================================ -->
+  <!-- BUILD -->
+  <!-- ================================================ -->
+  <build>
+    <plugins>
+      <!-- Options for javac. -->
+      <plugin>
+	<groupId>org.apache.maven.plugins</groupId>
+	<artifactId>maven-compiler-plugin</artifactId>
+        <version>2.3.2</version>
+	<configuration>
+	  <source>1.6</source>
+	  <target>1.6</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+	</configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!--
+  <scm>
+    <connection>scm:svn:http://10.85.74.1/devel/svn/sosirecr/</connection>
+    <developerConnection>scm:svn:svn+ssh://10.85.74.1/home/devel/trac/repo/sosirecr</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+
+  <issueManagement>
+    <system>trac</system>
+    <url>https://10.85.74.1/devel/trac/sosirecr/</url>
+  </issueManagement>
+  -->
+</project>
