@@ -75,7 +75,7 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
     extends WrappedGetter<R,F,G>
 </#if>
 {
-    public static final ${theclass}<${class},${class},Getter<${class},${class}>> INSTANCE
+    public static final ${theclass}<${class},${class},Getter<${class},${class}>> ID
         = new ${theclass}<${class},${class},Getter<${class},${class}>>(new Lenses.Identity<${class}>(${class}.class), ${class}.class) {
             @Override public ${class} get(${class} target) {
               return target;
@@ -92,9 +92,9 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
     <#assign r = objclass(m.returnType) />
     <#assign n = attrOf(m.simpleName) />
     <#if settersMap[n]??>
-        public static final AbstractLens<${class},${r}> ${n} = INSTANCE.${n}(${class}.class);
-        public AbstractLens<R,${r}> ${n}(Class<R> recordClass) {
-          return new AbstractLens<R,${r}>(recordClass, ${r}.class) {
+        public static final AbstractLens<${class},${r}> ${n} = ID.${n}();
+        public AbstractLens<R,${r}> ${n}() {
+          return new AbstractLens<R,${r}>(${theclass}.this.recordClass(), ${r}.class) {
             @Override public ${r} get(R target) {
               return ${theclass}.this.get(target).${m.simpleName}();
             }
@@ -104,9 +104,9 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
           };
         };
     <#else>
-        public static final AbstractGetter<${class},${r}> ${n} = INSTANCE.${n}(${class}.class);
-        public AbstractGetter<R,${r}> ${n}(Class<R> recordClass) {
-          return new AbstractGetter<R,${r}>(recordClass, ${r}.class) {
+        public static final AbstractGetter<${class},${r}> ${n} = ID.${n}();
+        public AbstractGetter<R,${r}> ${n}() {
+          return new AbstractGetter<R,${r}>(${theclass}.this.recordClass(), ${r}.class) {
             @Override public ${r} get(R target) {
               return ${theclass}.this.get(target).${m.simpleName}();
             }
@@ -148,7 +148,7 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
             }
         }
     </#if>
-        public static final Class_${n}<${class},${class}> ${n} = INSTANCE.${n}();
+        public static final Class_${n}<${class},${class}> ${n} = ID.${n}();
         public Class_${n}<R,F> ${n}() {
           return new Class_${n}<R,F>(this);
         }
