@@ -36,7 +36,7 @@ import freemarker.template.*;
  * TODO: Options - class suffix.
  */
 @SupportedSourceVersion(javax.lang.model.SourceVersion.RELEASE_6)
-@SupportedAnnotationTypes("cz.cvut.felk.cyber.jlens.Lens")
+@SupportedAnnotationTypes("cz.cvut.felk.cyber.jlens.LensProperties")
 @SupportedOptions({})
 public class JLensProcessor
     extends AbstractProcessor

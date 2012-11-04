@@ -24,6 +24,6 @@ import static java.lang.annotation.ElementType.*;
 @Documented
 @Retention(RetentionPolicy.CLASS)
 @Target({ TYPE })
-public @interface Lens {
+public @interface LensProperties {
 }
 

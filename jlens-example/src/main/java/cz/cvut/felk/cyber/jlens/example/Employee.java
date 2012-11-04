@@ -18,7 +18,7 @@ package cz.cvut.felk.cyber.jlens.example;
 
 import cz.cvut.felk.cyber.jlens.*;
 
-@Lens
+@LensProperties
 public class Employee
     extends Person
 {
