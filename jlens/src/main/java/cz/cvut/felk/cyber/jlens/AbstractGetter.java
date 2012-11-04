@@ -17,7 +17,7 @@
 package cz.cvut.felk.cyber.jlens;
 
 public abstract class AbstractGetter<R,F>
-    implements IGetter<R,F>
+    implements Getter<R,F>
 {
     private final Class<R> recordClass;
     private final Class<F> fieldClass;
@@ -40,11 +40,11 @@ public abstract class AbstractGetter<R,F>
 
     // .................................................................
 
-    public <X> IGetter<R,X> join(IGetter<? super F,X> second) {
-        return IGetters.join(this, second);
+    public <X> Getter<R,X> join(Getter<? super F,X> second) {
+        return Lenses.join(this, second);
     }
 
-    public <X> ISetter<R,X> join(ISetter<? super F,X> second) {
-        return IGetters.join(this, second);
+    public <X> Lens<R,X> join(Lens<? super F,X> second) {
+        return Lenses.join(this, second);
     }
 }

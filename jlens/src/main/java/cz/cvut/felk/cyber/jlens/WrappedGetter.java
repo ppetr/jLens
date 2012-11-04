@@ -16,7 +16,7 @@
  */
 package cz.cvut.felk.cyber.jlens;
 
-public abstract class WrappedGetter<T,R,G extends IGetter<T,?>>
+public abstract class WrappedGetter<T,R,G extends Getter<T,?>>
     extends AbstractGetter<T,R>
 {
     protected final G getter;

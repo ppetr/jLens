@@ -18,8 +18,10 @@ package cz.cvut.felk.cyber.jlens;
 
 /**
  */
-public interface ISetter<R,F>
-    extends IGetter<R,F>
+public interface Getter<R,F>
 {
-    public void set(R record, F fieldValue);
+    public F get(R target);
+
+    public Class<R> recordClass();
+    public Class<F> fieldClass();
 }

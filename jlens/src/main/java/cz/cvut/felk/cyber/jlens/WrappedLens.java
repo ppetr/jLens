@@ -16,12 +16,11 @@
  */
 package cz.cvut.felk.cyber.jlens;
 
-/**
- */
-public interface IGetter<R,F>
+public abstract class WrappedLens<R,F,G extends Getter<R,?>>
+    extends WrappedGetter<R,F,G>
+    implements Lens<R,F>
 {
-    public F get(R target);
-
-    public Class<R> recordClass();
-    public Class<F> fieldClass();
+    protected WrappedLens(G getter, Class<F> fieldClass) {
+        super(getter, fieldClass);
+    }
 }

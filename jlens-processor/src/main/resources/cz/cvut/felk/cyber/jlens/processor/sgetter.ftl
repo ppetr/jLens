@@ -67,7 +67,7 @@ import cz.cvut.felk.cyber.jlens.*;
 <#assign theclass = gsclass(class) />
 
 ${generated}
-public abstract class ${theclass}<R,F extends ${class},G extends IGetter<R,?>>
+public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
 <#assign parent = entityClassNames["${e.superclass}"]! />
 <#if parent?has_content>
     extends ${gsclass(parent)}<R,F,G>
@@ -75,8 +75,8 @@ public abstract class ${theclass}<R,F extends ${class},G extends IGetter<R,?>>
     extends WrappedGetter<R,F,G>
 </#if>
 {
-    public static final ${theclass}<${class},${class},IGetter<${class},${class}>> INSTANCE
-        = new ${theclass}<${class},${class},IGetter<${class},${class}>>(new IGetters.Identity<${class}>(${class}.class), ${class}.class) {
+    public static final ${theclass}<${class},${class},Getter<${class},${class}>> INSTANCE
+        = new ${theclass}<${class},${class},Getter<${class},${class}>>(new Lenses.Identity<${class}>(${class}.class), ${class}.class) {
             @Override public ${class} get(${class} target) {
               return target;
             }
@@ -92,9 +92,9 @@ public abstract class ${theclass}<R,F extends ${class},G extends IGetter<R,?>>
     <#assign r = objclass(m.returnType) />
     <#assign n = attrOf(m.simpleName) />
     <#if settersMap[n]??>
-        public static final AbstractSetter<${class},${r}> ${n} = INSTANCE.${n}(${class}.class);
-        public AbstractSetter<R,${r}> ${n}(Class<R> recordClass) {
-          return new AbstractSetter<R,${r}>(recordClass, ${r}.class) {
+        public static final AbstractLens<${class},${r}> ${n} = INSTANCE.${n}(${class}.class);
+        public AbstractLens<R,${r}> ${n}(Class<R> recordClass) {
+          return new AbstractLens<R,${r}>(recordClass, ${r}.class) {
             @Override public ${r} get(R target) {
               return ${theclass}.this.get(target).${m.simpleName}();
             }
@@ -122,7 +122,7 @@ public abstract class ${theclass}<R,F extends ${class},G extends IGetter<R,?>>
     <#if settersMap[n]??>
         public static class Class_${n}<S,F extends ${class}>
             extends ${gsclass(r)}<S,${r},${theclass}<S,F,?>>
-            implements ISetter<S,${r}>
+            implements Lens<S,${r}>
         {
             Class_${n}(${theclass}<S,F,?> p) {
                 super(p, ${r}.class);

@@ -18,56 +18,56 @@ package cz.cvut.felk.cyber.jlens;
 
 import java.util.*;
 
-public final class IGetters
+public final class Lenses
 {
-    private IGetters() {
+    private Lenses() {
         throw new UnsupportedOperationException();
     }
 
 
-    public static <U,T,X> IGetter<U,X> join(
-            IGetter<U,T> first,
-            IGetter<? super T,X> second)
+    public static <U,T,X> Getter<U,X> join(
+            Getter<U,T> first,
+            Getter<? super T,X> second)
     {
         if (first == null)
-            throw new NullPointerException("First IGetter is null");
+            throw new NullPointerException("First Getter is null");
         if (second == null)
-            throw new NullPointerException("Second IGetter is null");
-        return new JoinGetter<U,T,X,IGetter<? super T,X>>(first, second);
+            throw new NullPointerException("Second Getter is null");
+        return new JoinGetter<U,T,X,Getter<? super T,X>>(first, second);
     }
-    public static <U,T,X> IGetter<U,X> joinOrNull(
-            IGetter<U,T> first,
-            IGetter<? super T,X> second)
+    public static <U,T,X> Getter<U,X> joinOrNull(
+            Getter<U,T> first,
+            Getter<? super T,X> second)
     {
         if ((first == null) || (second == null))
             return null;
-        return new JoinGetter<U,T,X,IGetter<? super T,X>>(first, second);
+        return new JoinGetter<U,T,X,Getter<? super T,X>>(first, second);
     }
 
-    public static <U,T,X> ISetter<U,X> join(
-            IGetter<U,T> first,
-            final ISetter<? super T,X> second)
+    public static <U,T,X> Lens<U,X> join(
+            Getter<U,T> first,
+            final Lens<? super T,X> second)
     {
         if (first == null)
-            throw new NullPointerException("First IGetter is null");
+            throw new NullPointerException("First Getter is null");
         if (second == null)
-            throw new NullPointerException("Second ISetter is null");
-        return new JoinSetter<U,T,X,ISetter<? super T,X>>(first, second);
+            throw new NullPointerException("Second Lens is null");
+        return new JoinLens<U,T,X,Lens<? super T,X>>(first, second);
     }
-    public static <U,T,X> ISetter<U,X> joinOrNull(
-            IGetter<U,T> first,
-            final ISetter<? super T,X> second)
+    public static <U,T,X> Lens<U,X> joinOrNull(
+            Getter<U,T> first,
+            final Lens<? super T,X> second)
     {
         if ((first == null) || (second == null))
             return null;
-        return new JoinSetter<U,T,X,ISetter<? super T,X>>(first, second);
+        return new JoinLens<U,T,X,Lens<? super T,X>>(first, second);
     }
 
-    public static class JoinGetter<U,T,X,G extends IGetter<? super T,X>>
-            extends WrappedGetter<U,X,IGetter<U,T>>
+    public static class JoinGetter<U,T,X,G extends Getter<? super T,X>>
+            extends WrappedGetter<U,X,Getter<U,T>>
         {
             protected final G second;
-            public JoinGetter(IGetter<U,T> first, G second) {
+            public JoinGetter(Getter<U,T> first, G second) {
                 super(first, second.fieldClass());
                 this.second = second;
             }
@@ -75,11 +75,11 @@ public final class IGetters
                 return second.get(getter.get(target));
             }
         };
-    public static class JoinSetter<U,T,X,G extends ISetter<? super T,X>>
+    public static class JoinLens<U,T,X,G extends Lens<? super T,X>>
             extends JoinGetter<U,T,X,G>
-            implements ISetter<U,X>
+            implements Lens<U,X>
         {
-            public JoinSetter(IGetter<U,T> first, G second) {
+            public JoinLens(Getter<U,T> first, G second) {
                 super(first, second);
             }
             @Override public void set(U target, X value) {
@@ -89,21 +89,21 @@ public final class IGetters
 
 
     /*
-    public static <M,T> ISetter<M,Option<T>> opt(ISetter<M,T> isg) {
+    public static <M,T> Lens<M,Option<T>> opt(Lens<M,T> isg) {
         if (isg == null)
-            throw new NullPointerException("The ISetter is null");
+            throw new NullPointerException("The Lens is null");
         return new Opt<M,T>(isg);
     }
-    public static <M,T> ISetter<M,Option<T>> optOrNull(ISetter<M,T> isg) {
+    public static <M,T> Lens<M,Option<T>> optOrNull(Lens<M,T> isg) {
         if (isg == null)
             return null;
         return new Opt<M,T>(isg);
     }
 
     public static class Opt<M,T>
-            extends WrappedSetter<M,Option<T>,ISetter<M,T>>
+            extends WrappedLens<M,Option<T>,Lens<M,T>>
         {
-            public Opt(ISetter<M,T> isg) {
+            public Opt(Lens<M,T> isg) {
                 super(isg);
             }
 
@@ -117,28 +117,28 @@ public final class IGetters
     */
 
 
-    public static <M,T,X> ISetter<M,T> coerce(Class<M> clazz, ISetter<X,T> isg) {
+    public static <M,T,X> Lens<M,T> coerce(Class<M> clazz, Lens<X,T> isg) {
         if (clazz == null)
             throw new NullPointerException("The class is null");
         if (isg == null)
-            throw new NullPointerException("The ISetter is null");
+            throw new NullPointerException("The Lens is null");
         return new Coerce<M,T,X>(clazz, isg);
     }
-    public static <M,T,X> ISetter<M,T> coerceOrNull(Class<M> clazz, ISetter<X,T> isg) {
+    public static <M,T,X> Lens<M,T> coerceOrNull(Class<M> clazz, Lens<X,T> isg) {
         if ((clazz == null) || (isg == null))
             return null;
         return new Coerce<M,T,X>(clazz, isg);
     }
 
     public static class Coerce<M,T,X>
-            extends WrappedSetter<M,T,IGetter<M,?>>
+            extends WrappedLens<M,T,Getter<M,?>>
         {
-            private final ISetter<X,T> second;
-            public Coerce(IGetter<M,?> first, ISetter<X,T> isg) {
+            private final Lens<X,T> second;
+            public Coerce(Getter<M,?> first, Lens<X,T> isg) {
                 super(first, isg.fieldClass());
                 this.second = isg;
             }
-            public Coerce(Class<M> clazz, ISetter<X,T> isg) {
+            public Coerce(Class<M> clazz, Lens<X,T> isg) {
                 this(new Identity<M>(clazz), isg);
             }
 

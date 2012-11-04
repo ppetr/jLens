@@ -16,11 +16,10 @@
  */
 package cz.cvut.felk.cyber.jlens;
 
-public abstract class WrappedSetter<R,F,G extends IGetter<R,?>>
-    extends WrappedGetter<R,F,G>
-    implements ISetter<R,F>
+/**
+ */
+public interface Lens<R,F>
+    extends Getter<R,F>
 {
-    protected WrappedSetter(G getter, Class<F> fieldClass) {
-        super(getter, fieldClass);
-    }
+    public void set(R record, F fieldValue);
 }
