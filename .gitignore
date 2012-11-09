@@ -2,6 +2,9 @@
 target
 # ctags/etags
 TAGS
+tags.sh
+# identifiers
+ID
 # Vim
 *.swp
 *.swo
