@@ -1,12 +1,11 @@
-jLens
-=====
+# jLens
 
 Auto-generated [lenses](http://stackoverflow.com/q/8307370/1333025) for Java beans.
 
 Requirements: Java 1.6 or later.
 
-What are lenses?
-----------------
+
+## What are lenses?
 
 `Lens<R,F>` is an object that knows how to retrieve or update something of type
 `F` inside objects of type `R`.
@@ -28,8 +27,8 @@ This is similar to standard Java's getters and setters, but:
 - Similarly to functions, lenses can be composed. If we have `Lens<R,F>` and
   `Lens<F,U>` we can compose them to get `Lens<R,U>`.
 
-What does jLens do?
--------------------
+
+## What does jLens do?
 
 Apart from defining the core classes and interfaces (such as `Lens`), jLens
 contains an annotation processor that automatically generates lenses from bean
@@ -65,8 +64,8 @@ public class Person_L {
 
 Because `Candidate` isn't annotated, nothing is generated for it.
 
-Composition
-^^^^^^^^^^^
+
+### Composition ###
 
 What if we want to get a person's seller's name? Or person's seller's seller's
 name? We can type
@@ -91,8 +90,8 @@ Person_L.seller.seller().name()
 See the examples package for a complete example that generates the lenses and
 tests the generated lenses.
 
-Copyright
-=========
+
+# Copyright
 
 Copyright 2012, Petr Pudlák
 
