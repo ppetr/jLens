@@ -68,9 +68,11 @@ import cz.cvut.felk.cyber.jlens.*;
 
 ${generated}
 public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
-<#assign parent = entityClassNames["${e.superclass}"]! />
-<#if parent?has_content>
-    extends ${gsclass(parent)}<R,F,G>
+/* Parent: ${parentClass} */
+<#assign lensParentClass = lensClass[parentClass]! />
+/* Parent lens class: ${lensParentClass!} */
+<#if lensParentClass?has_content >
+    extends ${gsclass(lensParentClass)}<R,F,G>
 <#else>
     extends WrappedGetter<R,F,G>
 </#if>
@@ -89,8 +91,11 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
     public abstract F get(R target);
 
 <#list getterMethods as m>
-    <#assign r = objclass(m.returnType) />
-    <#assign n = attrOf(m.simpleName) />
+  <#assign r = objclass(m.returnType) />
+  <#assign n = attrOf(m.simpleName) />
+  <#assign lc = lensClass[r] />
+    // ${n} ________________________________________
+  <#if !( lc?has_content )>
     <#if settersMap[n]??>
         public static final AbstractLens<${class},${r}> ${n} = ID.${n}();
         public AbstractLens<R,${r}> ${n}() {
@@ -113,15 +118,10 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
           };
         }
     </#if>
-</#list>
-
-<#list getterEntityMethods as m>
-    <#assign r = objclass(m.returnType) />
-    <#assign n = attrOf(m.simpleName) />
-  <#-- <#if n != "roleType"> -->
+  <#else>
     <#if settersMap[n]??>
         public static class Class_${n}<S,F extends ${class}>
-            extends ${gsclass(r)}<S,${r},${theclass}<S,F,?>>
+            extends ${gsclass(lc)}<S,${r},${theclass}<S,F,?>>
             implements Lens<S,${r}>
         {
             Class_${n}(${theclass}<S,F,?> p) {
@@ -137,7 +137,7 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
         }
     <#else>
         public static class Class_${n}<S,F extends ${class}>
-            extends ${gsclass(r)}<S,${r},${theclass}<S,F,?>>
+            extends ${gsclass(lc)}<S,${r},${theclass}<S,F,?>>
         {
             Class_${n}(${theclass}<S,F,?> p) {
                 super(p, ${r}.class);
@@ -152,6 +152,6 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
         public Class_${n}<R,F> ${n}() {
           return new Class_${n}<R,F>(this);
         }
-<#-- </#if> -->
+  </#if>
 </#list>
 }

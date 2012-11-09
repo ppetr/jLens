@@ -16,8 +16,10 @@
  */
 package cz.cvut.felk.cyber.jlens.processor;
 
+import java.lang.annotation.Annotation;
 import javax.annotation.processing.*;
 import javax.lang.model.element.*;
+import javax.lang.model.type.*;
 import javax.lang.model.util.*;
 import static javax.lang.model.util.Types.*;
 import static javax.lang.model.util.ElementFilter.*;
@@ -30,6 +32,8 @@ import java.util.*;
 import static java.util.Collections.*;
 
 import freemarker.template.*;
+
+import cz.cvut.felk.cyber.jlens.*;
 
 
 /**
@@ -46,6 +50,7 @@ public class JLensProcessor
 
     public static final String CLASS_SUFFIX = "_L";
 
+    protected static final Class<LensProperties> ANNOTATION_CLASS = LensProperties.class;
 
  
     private final Configuration fmc;
@@ -68,12 +73,6 @@ public class JLensProcessor
         try {
             final Template template = fmc.getTemplate("sgetter.ftl");
 
-            final HashMap<String,TypeElement> entityClassNames
-                = new HashMap<String,TypeElement>();
-            for(TypeElement a : annotations)
-                for(TypeElement e : typesIn(roundEnv.getElementsAnnotatedWith(a)))
-                    entityClassNames.put(e.getQualifiedName().toString(), e);
-
             final Elements elms = processingEnv.getElementUtils();
             final Filer filer = processingEnv.getFiler();
             for(TypeElement a : annotations)
@@ -81,6 +80,7 @@ public class JLensProcessor
                 {
                     final PackageElement pkg = elms.getPackageOf(e);
 
+                    final TypeElement parent = parent(e);
                     final String name = e.getSimpleName().toString();
                     final String gsname = name + CLASS_SUFFIX;
 
@@ -100,10 +100,6 @@ public class JLensProcessor
                         = new HashMap<String,ExecutableElement>();
                     final ArrayList<ExecutableElement> getterMethods
                         = new ArrayList<ExecutableElement>();
-                    final ArrayList<ExecutableElement> getterEntityMethods
-                        = new ArrayList<ExecutableElement>();
-                    final HashSet<String> privacyAttrs
-                        = new HashSet<String>();
                     for(ExecutableElement m : methodsIn(e.getEnclosedElements()))
                     {
                         String mname = m.getSimpleName().toString();
@@ -119,23 +115,8 @@ public class JLensProcessor
                             continue;
                         getters.put(mname, m);
 
-                        if (entityClassNames.containsKey(m.getReturnType().toString()))
-                            getterEntityMethods.add(m);
-                        else
-                            getterMethods.add(m);
-
-//                        final String pa = getPrivacyAttribute(m);
-  //                      if (pa != null)
-    //                        privacyAttrs.add(pa);
+                        getterMethods.add(m);
                     }
-
-                    /*
-                    String privacyClass = "java.lang.Object";
-                    for(Map.Entry<String,ExecutableElement> entry : getters.entrySet())
-                        if (privacyAttrs.contains(entry.getKey()))
-                            privacyClass = entry.getValue().getReturnType().toString();
-                            */
-                 //   String privacyClass = getPrivacyClass(pkg, Object.class);
 
                     JavaFileObject file =
                         filer.createSourceFile(pkg.getQualifiedName() + "." + gsname, e);
@@ -143,16 +124,15 @@ public class JLensProcessor
                     HashMap<String,Object> params = new HashMap<String,Object>();
                     params.put("package", pkg.getQualifiedName());
                     params.put("class", name);
+                    if (parent != null)
+                        params.put("parentClass", parent.getQualifiedName().toString());
                     params.put("classSuffix", CLASS_SUFFIX);
                     params.put("generated", generated);
                     params.put("e", e);
                     params.put("methods", methodsIn(e.getEnclosedElements()));
                     params.put("getterMethods", getterMethods);
                     params.put("settersMap", setters);
-                    params.put("getterEntityMethods", getterEntityMethods);
-                    params.put("entityClassNames", entityClassNames);
-                   // params.put("privacyAttrs", privacyAttrs);
-                   // params.put("privacyClass", privacyClass);
+                    params.put("lensClass", new LensAbstractClass());
 
                     final Writer w = file.openWriter();
                     template.process(params, w);
@@ -184,7 +164,8 @@ public class JLensProcessor
         return Character.toLowerCase(s.charAt(offset)) + s.substring(offset + 1);
     }
  
-    protected static Object getAnnotation(Element m, Class<?> clazz)
+    // not used atm
+    protected static Object getAnnotationValue(Element m, Class<?> clazz)
     {
         final String cname = clazz.getName();
         for(AnnotationMirror am : m.getAnnotationMirrors())
@@ -198,5 +179,53 @@ public class JLensProcessor
         return null;
     }
 
- 
+    protected static boolean hasAnnotation(TypeElement m, Class<?> clazz) {
+        final String cname = clazz.getName();
+        for(AnnotationMirror am : m.getAnnotationMirrors())
+            if (am.getAnnotationType().toString().equals(cname))
+                return true;
+        return false;
+    }
+
+    protected TypeElement parent(TypeElement m) {
+        if (m == null)
+            return null;
+        final TypeMirror tm = m.getSuperclass();
+        final Element e = (tm != null) ? processingEnv.getTypeUtils().asElement(tm) : null;
+        if (e == null)
+            return null;
+        return e.accept(
+                new SimpleElementVisitor6<TypeElement,Void>() {
+                    @Override public TypeElement visitType(TypeElement e, Void p) {
+                        return e;
+                    }
+                }, null );
+    }
+
+    // TODO Caching?
+    protected Element annotated(TypeElement m, Class<? extends Annotation> clazz) {
+        for(; m != null; m = parent(m)) {
+            if (hasAnnotation(m, clazz))
+                return m;
+        }
+        return null;
+    }
+
+    public final class LensAbstractClass
+            implements TemplateHashModel
+        {
+            public LensAbstractClass() {
+            }
+            @Override
+            public TemplateModel get(String key) {
+                final Element parent =
+                    annotated(processingEnv.getElementUtils().getTypeElement(key), ANNOTATION_CLASS);
+                return (parent != null) ? new SimpleScalar(parent.toString())
+                                        : TemplateModel.NOTHING;
+            }
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+        }
 }
