@@ -18,14 +18,7 @@ package cz.cvut.felk.cyber.jlens.example;
 
 import cz.cvut.felk.cyber.jlens.*;
 
-@LensProperties
-public class Person {
-    private String name;
-    private Candidate seller;
-
-    public String getName()       { return this.name; }
-    public void setName(String v) { this.name = v; }
-
-    public Candidate getSeller()        { return this.seller; }
-    public void setSeller(Candidate v)  { this.seller = v; }
+public class Candidate
+    extends Person
+{
 }

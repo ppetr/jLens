@@ -20,14 +20,18 @@ import cz.cvut.felk.cyber.jlens.*;
 
 @LensProperties
 public class Employee
-    extends Person
+    extends Candidate
 {
     private int officeNo;
     private Employee manager;
+    private Person wife;
 
     public int getOfficeNo()       { return this.officeNo; }
     public void setOfficeNo(int v) { this.officeNo = v; }
 
     public Employee getManager()        { return this.manager; }
     public void setManager(Employee v)  { this.manager = v; }
+
+    public Person getWife()        { return this.wife; }
+    public void setWife(Person v)  { this.wife = v; }
 }
