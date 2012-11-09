@@ -48,21 +48,45 @@ public class Person {
     public Candidate getSeller()        { return this.seller; }
     public void setSeller(Candidate v)  { this.seller = v; }
 }
+
+public class Candidate {
+  ...
+}
 ```
 
 the processor will generate a helper class with static fields, something like:
 
 ```java
-    public class Person_L {
-        public static final AbstractLens<Person,String> name = ...;
-        public static final AbstractLens<Person,Candidate> seller = ...;
-    }
+public class Person_L {
+    public static final AbstractLens<Person,String> name = ...;
+    public static final AbstractLens<Person,Candidate> seller = ...;
+}
 ```
 
-Composition
-...........
+Because `Candidate` isn't annotated, nothing is generated for it.
 
-TODO
+Composition
+^^^^^^^^^^^
+
+What if we want to get a person's seller's name? Or person's seller's seller's
+name? We can type
+
+```java
+Lenses.join(Person_L.seller, Person_L.name)
+// or
+Lenses.join(Person_L.seller, Lenses.join(Person_L.seller, Person_L.name))
+```
+
+However this is not very convenient. Therefore jLens generates helper methods
+to all generated lenses. For attribute `someAttr` it generates method
+`someAttr()` that appends the appropriate lens to the current one. So in this
+example, we can write just
+
+```java
+Person_L.seller.name()
+// or
+Person_L.seller.seller().name()
+```
 
 See the examples package for a complete example that generates the lenses and
 tests the generated lenses.
