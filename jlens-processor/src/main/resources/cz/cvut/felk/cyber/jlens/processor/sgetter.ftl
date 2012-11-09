@@ -66,29 +66,98 @@ import cz.cvut.felk.cyber.jlens.*;
 
 <#assign theclass = gsclass(class) />
 
-${generated}
-public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
 /* Parent: ${parentClass} */
 <#assign lensParentClass = lensClass[parentClass]! />
 /* Parent lens class: ${lensParentClass!} */
-<#if lensParentClass?has_content >
-    extends ${gsclass(lensParentClass)}<R,F,G>
-<#else>
-    extends WrappedGetter<R,F,G>
-</#if>
+
+${generated}
+public final class ${theclass}
 {
-    public static final ${theclass}<${class},${class},Getter<${class},${class}>> ID
-        = new ${theclass}<${class},${class},Getter<${class},${class}>>(new Lenses.Identity<${class}>(${class}.class), ${class}.class) {
-            @Override public ${class} get(${class} target) {
-              return target;
-            }
-          };
+	private ${theclass}() { }
 
-    public ${theclass}(G getter, Class<F> fieldClass) {
-        super(getter, fieldClass);
-    }
+	public static final ${theclass}.Get<${class},${class},Getter<${class},${class}>> ID
+		= new ${theclass}.Get<${class},${class},Getter<${class},${class}>>(new Lenses.Identity<${class}>(${class}.class), ${class}.class) {
+			@Override public ${class} get(${class} target) {
+			  return target;
+			}
+		  };
 
-    public abstract F get(R target);
+
+	public static abstract class Get<R,F extends ${class},G extends Getter<R,?>>
+	<#if lensParentClass?has_content >
+		extends ${gsclass(lensParentClass)}.Get<R,F,G>
+	<#else>
+		extends WrappedGetter<R,F,G>
+	</#if>
+	{
+		public Get(G getter, Class<F> fieldClass) {
+			super(getter, fieldClass);
+		}
+
+		public abstract F get(R target);
+
+		<#list getterMethods as m>
+		  <#assign r = objclass(m.returnType) />
+		  <#assign n = attrOf(m.simpleName) />
+		  <#assign lc = lensClass[r] />
+			// ${n} ________________________________________
+		  <#if !( lc?has_content )>
+			<#if settersMap[n]??>
+				public AbstractLens<R,${r}> ${n}() {
+				  return new AbstractLens<R,${r}>(${theclass}.Get.this.recordClass(), ${r}.class) {
+					@Override public ${r} get(R target) {
+					  return ${theclass}.Get.this.get(target).${m.simpleName}();
+					}
+					@Override public void set(R target, ${r} value) {
+					  ${theclass}.Get.this.get(target).${settersMap[n].simpleName}(value);
+					}
+				  };
+				};
+			<#else>
+				public AbstractGetter<R,${r}> ${n}() {
+				  return new AbstractGetter<R,${r}>(${theclass}.Get.this.recordClass(), ${r}.class) {
+					@Override public ${r} get(R target) {
+					  return ${theclass}.Get.this.get(target).${m.simpleName}();
+					}
+				  };
+				}
+			</#if>
+		  <#else>
+			<#if settersMap[n]??>
+				public static class Class_${n}<S,F extends ${class}>
+					extends ${gsclass(lc)}.Get<S,${r},${theclass}.Get<S,F,?>>
+					implements Lens<S,${r}>
+				{
+					Class_${n}(${theclass}.Get<S,F,?> p) {
+						super(p, ${r}.class);
+					}
+
+					@Override public ${r} get(S target) {
+					  return getter.get(target).${m.simpleName}();
+					}
+					@Override public void set(S target, ${r} value) {
+					  getter.get(target).${settersMap[n].simpleName}(value);
+					}
+				}
+			<#else>
+				public static class Class_${n}<S,F extends ${class}>
+					extends ${gsclass(lc)}.Get<S,${r},${theclass}.Get<S,F,?>>
+				{
+					Class_${n}(${theclass}.Get<S,F,?> p) {
+						super(p, ${r}.class);
+					}
+
+					@Override public ${r} get(S target) {
+					  return getter.get(target).${m.simpleName}();
+					}
+				}
+			</#if>
+				public Class_${n}<R,F> ${n}() {
+				  return new Class_${n}<R,F>(this);
+				}
+		  </#if>
+		</#list>
+	}
 
 <#list getterMethods as m>
   <#assign r = objclass(m.returnType) />
@@ -98,60 +167,11 @@ public abstract class ${theclass}<R,F extends ${class},G extends Getter<R,?>>
   <#if !( lc?has_content )>
     <#if settersMap[n]??>
         public static final AbstractLens<${class},${r}> ${n} = ID.${n}();
-        public AbstractLens<R,${r}> ${n}() {
-          return new AbstractLens<R,${r}>(${theclass}.this.recordClass(), ${r}.class) {
-            @Override public ${r} get(R target) {
-              return ${theclass}.this.get(target).${m.simpleName}();
-            }
-            @Override public void set(R target, ${r} value) {
-              ${theclass}.this.get(target).${settersMap[n].simpleName}(value);
-            }
-          };
-        };
     <#else>
         public static final AbstractGetter<${class},${r}> ${n} = ID.${n}();
-        public AbstractGetter<R,${r}> ${n}() {
-          return new AbstractGetter<R,${r}>(${theclass}.this.recordClass(), ${r}.class) {
-            @Override public ${r} get(R target) {
-              return ${theclass}.this.get(target).${m.simpleName}();
-            }
-          };
-        }
     </#if>
   <#else>
-    <#if settersMap[n]??>
-        public static class Class_${n}<S,F extends ${class}>
-            extends ${gsclass(lc)}<S,${r},${theclass}<S,F,?>>
-            implements Lens<S,${r}>
-        {
-            Class_${n}(${theclass}<S,F,?> p) {
-                super(p, ${r}.class);
-            }
-
-            @Override public ${r} get(S target) {
-              return getter.get(target).${m.simpleName}();
-            }
-            @Override public void set(S target, ${r} value) {
-              getter.get(target).${settersMap[n].simpleName}(value);
-            }
-        }
-    <#else>
-        public static class Class_${n}<S,F extends ${class}>
-            extends ${gsclass(lc)}<S,${r},${theclass}<S,F,?>>
-        {
-            Class_${n}(${theclass}<S,F,?> p) {
-                super(p, ${r}.class);
-            }
-
-            @Override public ${r} get(S target) {
-              return getter.get(target).${m.simpleName}();
-            }
-        }
-    </#if>
-        public static final Class_${n}<${class},${class}> ${n} = ID.${n}();
-        public Class_${n}<R,F> ${n}() {
-          return new Class_${n}<R,F>(this);
-        }
+        public static final Get.Class_${n}<${class},${class}> ${n} = ID.${n}();
   </#if>
 </#list>
 }
