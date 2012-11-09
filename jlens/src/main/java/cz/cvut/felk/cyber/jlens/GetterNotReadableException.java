@@ -16,6 +16,10 @@
  */
 package cz.cvut.felk.cyber.jlens;
 
+/**
+ * Thrown if for some reason it's not possible to retrieve the value from a
+ * getter. For auto-generated getters this will never happen.
+ */
 public class GetterNotReadableException
     extends RuntimeException
 {

@@ -20,6 +20,8 @@ import java.lang.annotation.*;
 import static java.lang.annotation.ElementType.*;
 
 /**
+ * A Java bean marked with this annotation will be processed and
+ * {@link Lens lenses} will be generated for its properties.
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)

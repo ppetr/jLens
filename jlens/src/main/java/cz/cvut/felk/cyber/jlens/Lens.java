@@ -17,6 +17,9 @@
 package cz.cvut.felk.cyber.jlens;
 
 /**
+ * Represents a lens that can read or update something of type <code>F</code>
+ * inside something of type <code>R</code>. This is the core interface of
+ * jLens.
  */
 public interface Lens<R,F>
     extends Getter<R,F>

@@ -17,6 +17,9 @@
 package cz.cvut.felk.cyber.jlens;
 
 /**
+ * Represents a getter (a read-only lens) that can read something of type <code>F</code>
+ * inside something of type <code>R</code>. In addition, it provides classes of
+ * both <code>R</code> and <code>F</code>.
  */
 public interface Getter<R,F>
 {

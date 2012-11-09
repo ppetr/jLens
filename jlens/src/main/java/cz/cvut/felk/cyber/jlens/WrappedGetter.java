@@ -16,6 +16,11 @@
  */
 package cz.cvut.felk.cyber.jlens;
 
+/**
+ * A wrapper for constructing {@link Getter getters} (read-only lenses) that
+ * are based on another {@link Getter}. A typical example is
+ * {@link Lenses.JoinGetter}.
+ */
 public abstract class WrappedGetter<T,R,G extends Getter<T,?>>
     extends AbstractGetter<T,R>
 {
