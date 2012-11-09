@@ -14,13 +14,15 @@ What are lenses?
 
 Each `Lens` has two operations:
 
-    public void set(R record, F fieldValue);
-    public F get(R target);
+```java
+public void set(R record, F fieldValue);
+public F get(R target);
+```
 
 This is similar to standard Java's getters and setters, but:
 
-- Getters/setters are methods of an object. Lenses are separate objects that
-  get the object to work on as an argument.
+- Getters/setters are methods of a bean. Lenses are separate objects that
+  get the bean to work on as an argument.
 - Because they're separate objects, we can operate on them. For example, we can
   pass them as arguments to methods.
 - Similarly to functions, lenses can be composed. If we have `Lens<R,F>` and
@@ -34,24 +36,28 @@ contains an annotation processor that automatically generates lenses from bean
 setters/getters during compilation. All we need is to annotate our bean class
 with `@LensProperties`. For example if we have class
 
-    @LensProperties
-    public class Person {
-        private String name;
-        private Candidate seller;
+```java
+@LensProperties
+public class Person {
+    private String name;
+    private Candidate seller;
 
-        public String getName()       { return this.name; }
-        public void setName(String v) { this.name = v; }
+    public String getName()       { return this.name; }
+    public void setName(String v) { this.name = v; }
 
-        public Candidate getSeller()        { return this.seller; }
-        public void setSeller(Candidate v)  { this.seller = v; }
-    }
+    public Candidate getSeller()        { return this.seller; }
+    public void setSeller(Candidate v)  { this.seller = v; }
+}
+```
 
-the processor will generate a helper class with static fields:
+the processor will generate a helper class with static fields, something like:
 
+```java
     public class Person_L {
         public static final AbstractLens<Person,String> name = ...;
         public static final AbstractLens<Person,Candidate> seller = ...;
     }
+```
 
 Composition
 ...........
