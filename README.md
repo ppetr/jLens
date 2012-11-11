@@ -90,6 +90,48 @@ Person_L.seller.seller().name()
 See the examples package for a complete example that generates the lenses and
 tests the generated lenses.
 
+## What are lenses useful for?
+
+### An example
+
+Suppose we're creating a GUI that allows the user to edit some data. 
+We want a component that pops up a dialog window where the user can update
+a `Person'`s name. Without lenses, we'd have to hard-wire `Person` and its
+`getName()` and `setName(...)` into the component. This would be quite
+inconvenient, and we'd end up with a separate dialog class for every field we
+wanted to edit. 
+
+With lenses, we can create a single generic editor dialog that can edit
+anything that has a `String` inside:
+
+```java
+public EditorDialog<M> extends ... {
+    protected final M model;
+    protected final Lens<M,String> lens;
+
+    public EditorDialog(M model, Lens<M,String> lens) {
+        this.model = model;
+        this.lens = lens;
+    }
+
+    protected String load() {
+        return lens.get(model);
+    }
+    protected void save(String value) {
+        lens.set(model, value);
+    }
+    ...
+}
+```
+
+Now whenever `EditorDialog` needs to read the value that should be filled into
+its text field, it simply calls `load()`. And when the user edits the
+field and closes the dialog, it simply saves the value by calling
+`save(newValue)`. Voilà, we have a generic editor component that
+allows us to edit a String value within anything we want. We can use it to edit
+a person's name by calling `new EditorDialog(somePerson, Person_L.name)`. But
+we can use it as well to edit a person's seller's name by calling  `new
+EditorDialog(somePerson, Person_L.seller.name())` etc.
 
 # Copyright
 
