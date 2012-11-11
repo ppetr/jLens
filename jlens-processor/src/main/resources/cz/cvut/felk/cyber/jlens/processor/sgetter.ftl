@@ -37,9 +37,10 @@ import cz.cvut.felk.cyber.jlens.*;
 <#function objclass class>
   <#if (class?index_of(".") lt 0) && (class?index_of("[") lt 0)>
     <#switch class>
-      <#case "int">
-        <#return "Integer" />
-        <#break>
+      <#case "int">     <#return "Integer" /> <#break>
+      <#case "char">    <#return "Character" /> <#break>
+	  <#-- All other primitive data types can be simply constructed by
+		   upper-casing the first letter. -->
       <#default>
         <#return class?cap_first />
     </#switch>
