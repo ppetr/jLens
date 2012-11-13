@@ -160,6 +160,12 @@ public final class ${theclass}
 		</#list>
 	}
 
+
+  // ------------------------------------------
+  // A list of all available lenses.
+
+  private static final java.util.Map<String,Lens<${class},?>> LENSES_MAP_INTERNAL =
+		new java.util.HashMap<String,Lens<${class},?>>();
 <#list getterMethods as m>
   <#assign r = objclass(m.returnType) />
   <#assign n = attrOf(m.simpleName) />
@@ -174,5 +180,11 @@ public final class ${theclass}
   <#else>
         public static final Get.Class_${n}<${class},${class}> ${n} = ID.${n}();
   </#if>
+  <#-- TODO: Escape the {n} interpolation properly. -->
+  static { LENSES_MAP_INTERNAL.put("${n}", ${n}); }
 </#list>
+
+  // A list of all available lenses.
+  public static final java.util.Map<String,Lens<${class},?>> LENSES_MAP =
+	java.util.Collections.<String,Lens<${class},?>>unmodifiableMap(LENSES_MAP_INTERNAL);
 }
