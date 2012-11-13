@@ -225,4 +225,33 @@ public final class Lenses
                 return target;
             }
         }
+
+    // -----------------------------------------------------------------
+
+    public static <R,F> Store<F> store(Lens<R,F> lens, R record) {
+        return new LensStore(lens, record);
+    }
+
+    /**
+     * Implements the conversion from {@link Lens lenses} to
+     * {@link Store stores}.
+     */
+    public static class LensStore<R,F>
+            implements Store<F>
+        {
+            protected final R record;
+            protected final Lens<R,F> lens;
+
+            public LensStore(Lens<R,F> lens, R record) {
+                this.record = record;
+                this.lens = lens;
+            }
+
+            public F get() {
+                return lens.get(record);
+            }
+            public void set(F value) {
+                lens.set(record, value);
+            }
+        }
 }
