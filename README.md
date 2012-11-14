@@ -133,6 +133,31 @@ a person's name by calling `new EditorDialog(somePerson, Person_L.name)`. But
 we can use it as well to edit a person's seller's name by calling  `new
 EditorDialog(somePerson, Person_L.seller.name())` etc.
 
+#### Simplification using `Store`
+
+In the previous example, we didn't actually need the model except to pass it to the lens. This is a common situation so it's worth simplifying it using some general solution: we define interface `Store`, which represents something from which we can read a value of type `F`, or update the value. Then, given a lens and its record object, we can combine them to create a `Store`. (And of course we can create custom `Store`s that aren't composed of a lens and a record.)
+
+```java
+public EditorDialog1 extends ... {
+    protected final Store<String> store;
+
+    public EditorDialog(Store<String> store) {
+        this.store = store;
+    }
+    public <M> EditorDialog(M model, Lens<M,String> lens) {
+        this(Lenses.store(lens, model));
+    }
+
+    protected String load() {
+        return store.get();
+    }
+    protected void save(String value) {
+        store.set(value);
+    }
+    ...
+}
+```
+
 # Copyright
 
 Copyright 2012, Petr Pudlák
