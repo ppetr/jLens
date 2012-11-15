@@ -158,6 +158,13 @@ public EditorDialog1 extends ... {
 }
 ```
 
+## Things to be done
+
+1. Generate javadoc documentation and publish it here on github (and automate the process).
+1. Publish the library in a public maven repository, preferably some standard one.
+
+If you want to help with any of this, you'll be most welcome.
+
 # Copyright
 
 Copyright 2012, Petr Pudlák

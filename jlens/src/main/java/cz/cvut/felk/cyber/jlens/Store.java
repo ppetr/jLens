@@ -19,7 +19,7 @@ package cz.cvut.felk.cyber.jlens;
 /**
  * Represents a <em>store</em> that can read or update a value of type
  * <code>F</code> inside something that is not directly accessible. You can
- * think of it as {@link Lens lens} that has fixed its record argument.
+ * think of it as a {@link Lens lens} that has fixed its record argument.
  */
 public interface Store<F>
 {
